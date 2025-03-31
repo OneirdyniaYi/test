@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, request
+from flask import render_template, request,Response
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.model import Counters
@@ -7,6 +7,7 @@ from wxcloudrun.response import make_succ_empty_response, make_succ_response, ma
 import requests
 
 
+    
 @app.route('/')
 def index():
     """
@@ -74,4 +75,7 @@ def service():
 
     url = f"http://124.221.164.152/api/v1/{params['service']}"
     rsp = requests.post(url,headers={"Content-Type":"application/json"},json=params)
-    return {}
+    if rsp.status_code != 200:
+        data = json.dumps({'msg': 'error', 'data': rsp.text})
+        return Response(data, mimetype='application/json')
+    return Response(rsp.text, mimetype='application/json')
