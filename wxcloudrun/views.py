@@ -4,6 +4,7 @@ from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
+import requests
 
 
 @app.route('/')
@@ -64,3 +65,13 @@ def get_count():
     """
     counter = Counters.query.filter(Counters.id == 1).first()
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
+
+@app.route('/api/v1/service', methods=['POST'])
+def service():
+
+    # 获取请求体参数
+    params = request.get_json()
+
+    url = f"http://124.221.164.152/api/v1/{params['service']}"
+    rsp = requests.post(url,headers={"Content-Type":"application/json"},json=params)
+    return {}
